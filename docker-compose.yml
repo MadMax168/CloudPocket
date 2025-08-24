@@ -4,7 +4,7 @@ service:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: cloudpocket168
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: cloudpocket
     ports:
       - "5432:5432"
