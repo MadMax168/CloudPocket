@@ -6,6 +6,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type WalletRes struct {
+	Index  uint    `json:"index"`
+	Name   string  `json:"name"`
+	Target string  `json:"target"`
+	Goal   float64 `json:"goal"`
+	Code   string  `json:"code"`
+}
+
 func GetWallet(c *fiber.Ctx) error {
 	UID, ok := c.Locals("userID").(uint)
 	if !ok {
@@ -13,13 +21,25 @@ func GetWallet(c *fiber.Ctx) error {
 	}
 	var wxs []models.Wallet
 
-	result := config.DB.Where("user_id = ?", UID).Find(&wxs)
-
-	if result.Error != nil {
+	if err := config.DB.Where("user_id = ?", UID).Find(&wxs).Error; err != nil {
 		return c.SendStatus(500)
 	}
 
-	return c.Status(200).JSON(&wxs)
+	var response []WalletRes
+	for _, i := range wxs {
+		response = append(response, WalletRes{
+			Index:  i.ID,
+			Name:   i.Name,
+			Target: i.Target,
+			Goal:   i.Goal,
+			Code:   i.Code,
+		})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"success": true,
+		"data":    response,
+	})
 }
 
 func AddWallet(c *fiber.Ctx) error {

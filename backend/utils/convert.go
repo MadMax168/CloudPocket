@@ -20,6 +20,6 @@ func StrToUint(str string) (uint, error) {
 }
 
 func GetUint(c *fiber.Ctx, key string) (uint, error) {
-	str := c.Get(key)
+	str := c.Params(key)
 	return StrToUint(str)
 }

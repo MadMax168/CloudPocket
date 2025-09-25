@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"strings"
+
 	"github.com/MadMax168/CloudPocket.git/config"
-	"github.com/MadMax168/CloudPocket.git/models"
 	"github.com/MadMax168/CloudPocket.git/middleware"
+	"github.com/MadMax168/CloudPocket.git/models"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -56,20 +58,58 @@ func Login(c *fiber.Ctx) error {
 }
 
 func Register(c *fiber.Ctx) error {
-	usr := new(models.User)
-
-	if err := c.BodyParser(&usr); err != nil {
-		return c.Status(400).SendString(err.Error())
+	var input struct {
+		Name     string `json:"name"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(usr.Password), bcrypt.DefaultCost)
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+	}
+
+	// Validate input
+	input.Email = strings.TrimSpace(strings.ToLower(input.Email))
+	input.Name = strings.TrimSpace(input.Name)
+
+	if input.Name == "" || input.Email == "" || input.Password == "" {
+		return c.Status(400).JSON(fiber.Map{"error": "Name, email, and password are required"})
+	}
+
+	if len(input.Password) < 6 {
+		return c.Status(400).JSON(fiber.Map{"error": "Password must be at least 6 characters"})
+	}
+
+	// NEW: Check if email already exists
+	var existingUser models.User
+	if err := config.DB.Where("email = ?", input.Email).First(&existingUser).Error; err == nil {
+		return c.Status(409).JSON(fiber.Map{"error": "Email already registered"})
+	}
+
+	// Hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return c.SendStatus(500)
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to process password"})
 	}
-	usr.Password = string(hashedPassword)
 
-	config.DB.Create(&usr)
-	return c.Status(201).JSON(usr)
+	// Create user
+	user := models.User{
+		Name:     input.Name,
+		Email:    input.Email,
+		Password: string(hashedPassword),
+	}
+
+	if err := config.DB.Create(&user).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to create user"})
+	}
+
+	// Don't return password in response
+	user.Password = ""
+	return c.Status(201).JSON(fiber.Map{
+		"success": true,
+		"data":    user,
+		"message": "User registered successfully",
+	})
 }
 
 type PasswordUpdate struct {
