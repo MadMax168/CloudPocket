@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -16,15 +16,18 @@ api.interceptors.request.use((config) => {
 });
 
 export const authAPI = {
-  login: (email: string, password: string) => 
-    api.post('/login', { email, password }),
-  register: (name: string, email: string, password: string) => 
-    api.post('/register', { name, email, password }),
-  getMe: () => api.get('/api/me'),
-};
-
-export const walletAPI = {
-  getWallets: () => api.get('/api/wallets'),
-  createWallet: (data: any) => api.post('/api/wallets', data),
-  // ... more endpoints
+  login: async (email: string, password: string) => {
+    const response = await api.post('/login', { email, password });
+    return response.data;
+  },
+  
+  register: async (name: string, email: string, password: string) => {
+    const response = await api.post('/register', { name, email, password });
+    return response.data;
+  },
+  
+  getMe: async () => {
+    const response = await api.get('/api/me');
+    return response.data;
+  }
 };
