@@ -59,9 +59,13 @@ export function RegisterForm() {
     setError('');
     setSuccess('');
 
+    console.log('Form submitted');
+    console.log('Form data:', formData);
+
     // Validate form
     const validationError = validateForm();
     if (validationError) {
+      console.log('Validation error:', validationError);
       setError(validationError);
       setLoading(false);
       return;
@@ -70,6 +74,8 @@ export function RegisterForm() {
     try {
       const { confirmPassword, ...registerData } = formData;
       const response = await authApi.register(registerData);
+      console.log('Sending to API:', registerData);
+      console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
       
       setSuccess('Account created successfully! Redirecting to login...');
       
