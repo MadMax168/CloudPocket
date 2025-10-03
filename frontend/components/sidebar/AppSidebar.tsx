@@ -37,7 +37,7 @@ export function AppSidebar() {
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen w-64 flex flex-col backdrop-blur-xl bg-white/30 border-r border-white/20 shadow-xl">
       {/* Top Section - User Profile */}
       <div className="p-6">
         <UserProf user={user} isAuthenticated={isAuthenticated} />

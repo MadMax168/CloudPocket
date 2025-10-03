@@ -17,7 +17,7 @@ export function UserProf({ user, isAuthenticated }: UserProfProps) {
   };
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 backdrop-blur-md bg-white/40 border border-white/30 shadow-lg">
       <div className="flex flex-col items-center gap-3">
         {/* Avatar Circle */}
         <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">

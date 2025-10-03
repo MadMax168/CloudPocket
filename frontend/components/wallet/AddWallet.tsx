@@ -56,7 +56,7 @@ export function AddWalletBut({ onCreate }: AddWalletButProps) {
     <>
       <Button
         onClick={() => setIsOpen(true)}
-        className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
+        className="w-full bg-green-600 hover:bg-green-700 flex items-center gap-2"
       >
         <Plus className="w-5 h-5" />
         Create Wallet
