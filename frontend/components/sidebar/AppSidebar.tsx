@@ -8,7 +8,7 @@ import { walletApi } from "@/lib/api/api";
 import { Wallet } from "@/lib/types";
 import { UserProf } from "@/components/sidebar/UserProf";
 import { WalletList } from "@/components/sidebar/WalletList";
-import { Home, LogIn, LogOut } from "lucide-react";
+import { LogIn, LogOut } from "lucide-react";
 
 export function AppSidebar() {
   const router = useRouter();
@@ -37,32 +37,20 @@ export function AppSidebar() {
   };
 
   return (
-    <div className="h-screen w-64 flex flex-col backdrop-blur-xl bg-white/30 border-r border-white/20 shadow-xl">
+    <div className="h-screen w-80 flex flex-col bg-gradient-to-b from-gray-100 to-gray-200 border-r border-gray-300 shadow-xl">
       {/* Top Section - User Profile */}
       <div className="p-6">
         <UserProf user={user} isAuthenticated={isAuthenticated} />
       </div>
 
-      {/* Middle Section - Navigation & Wallets */}
-      <div className="flex-1 px-4 overflow-y-auto">
-        {/* Home Button */}
-        <button
-          onClick={() => router.push("/")}
-          className="w-full flex items-center gap-3 px-4 py-3 mb-4 rounded-lg text-gray-700 hover:bg-white/50 transition-all duration-200 font-medium"
-        >
-          <Home className="w-5 h-5" />
-          <span>Home</span>
-        </button>
-
-        {/* Wallets Section */}
+      {/* Middle Section - Wallets */}
+      <div className="flex-1 px-6 overflow-y-auto">
         {isAuthenticated && (
           <div className="mb-4">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">
-              Your Wallets
-            </h3>
             {loading ? (
-              <div className="px-4 py-8 text-center text-gray-500 text-sm">
-                Loading...
+              <div className="py-12 text-center text-gray-500 text-sm">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 mx-auto mb-2"></div>
+                Loading wallets...
               </div>
             ) : (
               <WalletList 
@@ -74,12 +62,12 @@ export function AppSidebar() {
         )}
       </div>
 
-      {/* Bottom Section - Auth Button */}
-      <div className="p-4 border-t border-white/20">
+      {/* Bottom Section - Logout Button */}
+      <div className="p-6">
         {isAuthenticated ? (
           <button
             onClick={logout}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-red-500/80 hover:bg-red-600/80 text-white transition-all duration-200 font-medium backdrop-blur-sm"
+            className="w-full bg-gradient-to-br from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white font-semibold py-4 px-6 rounded-2xl shadow-lg transition-all duration-200 flex items-center justify-center gap-3"
           >
             <LogOut className="w-5 h-5" />
             <span>Logout</span>
@@ -87,7 +75,7 @@ export function AppSidebar() {
         ) : (
           <button
             onClick={() => router.push("/auth/login")}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-blue-500/80 hover:bg-blue-600/80 text-white transition-all duration-200 font-medium backdrop-blur-sm"
+            className="w-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-2xl shadow-lg transition-all duration-200 flex items-center justify-center gap-3"
           >
             <LogIn className="w-5 h-5" />
             <span>Login</span>

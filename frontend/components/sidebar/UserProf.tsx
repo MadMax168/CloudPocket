@@ -1,9 +1,8 @@
 // components/sidebar/UserProf.tsx
 "use client";
 
-import { Card } from "@/components/ui/Card";
 import { User } from "@/lib/types";
-import { Cloud } from "lucide-react";
+import { Cloud, User as UserIcon } from "lucide-react";
 
 interface UserProfProps {
   user: User | null;
@@ -17,34 +16,36 @@ export function UserProf({ user, isAuthenticated }: UserProfProps) {
   };
 
   return (
-    <Card className="p-4 backdrop-blur-md bg-white/40 border border-white/30 shadow-lg">
-      <div className="flex flex-col items-center gap-3">
+    <div className="bg-gradient-to-br from-gray-300 to-gray-400 rounded-2xl p-6 shadow-lg">
+      <div className="flex flex-col items-center gap-4">
+        <h2 className="text-lg font-bold text-gray-800">User Data</h2>
+        
         {/* Avatar Circle */}
-        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-xl border-4 border-white">
           {isAuthenticated ? (
-            <span className="text-2xl font-bold text-white">
+            <span className="text-3xl font-bold text-white">
               {getInitial()}
             </span>
           ) : (
-            <Cloud className="w-8 h-8 text-white" />
+            <Cloud className="w-10 h-10 text-white" />
           )}
         </div>
 
         {/* User Info */}
         {isAuthenticated && user ? (
-          <div className="text-center">
-            <p className="font-semibold text-gray-800 text-sm">{user.name}</p>
-            <p className="text-xs text-gray-600 truncate max-w-[180px]">
+          <div className="text-center w-full">
+            <p className="font-bold text-gray-900 text-base mb-1">{user.name}</p>
+            <p className="text-sm text-gray-700 truncate px-2">
               {user.email}
             </p>
           </div>
         ) : (
           <div className="text-center">
-            <p className="font-semibold text-gray-800 text-sm">Guest</p>
-            <p className="text-xs text-gray-600">Not logged in</p>
+            <p className="font-bold text-gray-900 text-base mb-1">Guest</p>
+            <p className="text-sm text-gray-700">Please log in</p>
           </div>
         )}
       </div>
-    </Card>
+    </div>
   );
 }
