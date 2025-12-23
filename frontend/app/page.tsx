@@ -1,4 +1,4 @@
-// app/page.tsx (Updated with Sidebar)
+// app/page.tsx (Updated with Income/Expense tracking)
 "use client";
 
 import { useEffect, useState } from "react";
@@ -20,6 +20,8 @@ export default function Dashboard() {
   const [sharedWallets, setSharedWallets] = useState<WalletShare[]>([]);
   const [pendingShares, setPendingShares] = useState<WalletShare[]>([]);
   const [walletAmounts, setWalletAmounts] = useState<Record<number, number>>({});
+  const [walletIncome, setWalletIncome] = useState<Record<number, number>>({});
+  const [walletExpense, setWalletExpense] = useState<Record<number, number>>({});
   
   const [loading, setLoading] = useState(true);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -59,32 +61,62 @@ export default function Dashboard() {
       setPendingShares(pendingData);
 
       const amounts: Record<number, number> = {};
+      const incomes: Record<number, number> = {};
+      const expenses: Record<number, number> = {};
       
+      // Calculate for owned wallets
       for (const wallet of walletData) {
         try {
           const transactions = await transactionApi.getTransactions(wallet.index);
-          const total = transactions.reduce((sum, t) => {
-            return t.type === "income" ? sum + t.amount : sum - t.amount;
-          }, 0);
+          
+          const income = transactions
+            .filter(t => t.type === "income")
+            .reduce((sum, t) => sum + t.amount, 0);
+          
+          const expense = transactions
+            .filter(t => t.type === "expense")
+            .reduce((sum, t) => sum + t.amount, 0);
+          
+          const total = income - expense;
+          
           amounts[wallet.index] = total;
+          incomes[wallet.index] = income;
+          expenses[wallet.index] = expense;
         } catch (err) {
           amounts[wallet.index] = 0;
+          incomes[wallet.index] = 0;
+          expenses[wallet.index] = 0;
         }
       }
       
+      // Calculate for shared wallets
       for (const share of sharedData) {
         try {
           const transactions = await transactionApi.getTransactions(share.Wallet.ID);
-          const total = transactions.reduce((sum, t) => {
-            return t.type === "income" ? sum + t.amount : sum - t.amount;
-          }, 0);
+          
+          const income = transactions
+            .filter(t => t.type === "income")
+            .reduce((sum, t) => sum + t.amount, 0);
+          
+          const expense = transactions
+            .filter(t => t.type === "expense")
+            .reduce((sum, t) => sum + t.amount, 0);
+          
+          const total = income - expense;
+          
           amounts[share.Wallet.ID] = total;
+          incomes[share.Wallet.ID] = income;
+          expenses[share.Wallet.ID] = expense;
         } catch (err) {
           amounts[share.Wallet.ID] = 0;
+          incomes[share.Wallet.ID] = 0;
+          expenses[share.Wallet.ID] = 0;
         }
       }
       
       setWalletAmounts(amounts);
+      setWalletIncome(incomes);
+      setWalletExpense(expenses);
     } catch (error) {
       console.error("Failed to load data:", error);
       setWallets([]);
@@ -230,6 +262,9 @@ export default function Dashboard() {
                     key={wallet.index}
                     wallet={wallet}
                     currentAmount={walletAmounts[wallet.index] || 0}
+                    income={walletIncome[wallet.index] || 0}
+                    expense={walletExpense[wallet.index] || 0}
+                    userInitial={user?.name?.charAt(0).toUpperCase() || "U"}
                     onSettingsClick={handleOpenSettings}
                   />
                 ))}
@@ -255,7 +290,10 @@ export default function Dashboard() {
                       goal: share.Wallet.goal,
                     }}
                     currentAmount={walletAmounts[share.Wallet.ID] || 0}
-                    onSettingsClick={() => {}}
+                    income={walletIncome[share.Wallet.ID] || 0}
+                    expense={walletExpense[share.Wallet.ID] || 0}
+                    userInitial={user?.name?.charAt(0).toUpperCase() || "U"}
+                    onSettingsClick={handleOpenSettings}
                     isShared={true}
                     sharedBy={share.Owner.name}
                   />
