@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/MadMax168/CloudPocket.git/config"
 	"github.com/MadMax168/CloudPocket.git/models"
@@ -37,6 +38,11 @@ func main() {
 
 	routes.SetAllRoutes(app)
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000" // Default for local development
+	}
+
 	log.Println("Server starting on :8000")
-	app.Listen(":8000")
+	app.Listen(":" + port)
 }
