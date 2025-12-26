@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Wallet, WalletInput } from "@/lib/types";
 import { Plus, ChevronDown, ChevronUp } from "lucide-react";
-import { AddWalletDialog } from "@/components/wallet/AddWalletDialog";
+import { AddWalletDialog } from "@/components/sidebar/AddWalletDialog";
 import { walletApi } from "@/lib/api/api";
 
 interface WalletListProps {
