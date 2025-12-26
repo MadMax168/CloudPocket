@@ -3,9 +3,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Wallet } from "@/lib/types";
+import { Wallet, WalletInput } from "@/lib/types";
 import { Plus, ChevronDown, ChevronUp } from "lucide-react";
-import { AddWalletDialog } from "@/components/sidebar/AddWalletDialog";
+import { AddWalletDialog } from "@/components/wallet/AddWalletDialog";
 import { walletApi } from "@/lib/api/api";
 
 interface WalletListProps {
@@ -18,12 +18,11 @@ export function WalletList({ wallets, onRefresh }: WalletListProps) {
   const [showAll, setShowAll] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
 
-  // Show 3 or 5 wallets
   const maxDisplay = 5;
   const displayedWallets = showAll ? wallets : wallets.slice(0, maxDisplay);
   const hasMoreWallets = wallets.length > maxDisplay;
 
-  const handleCreateWallet = async (data: any) => {
+  const handleCreateWallet = async (data: WalletInput) => {
     await walletApi.createWallet(data);
     onRefresh();
     setShowDialog(false);
@@ -32,7 +31,6 @@ export function WalletList({ wallets, onRefresh }: WalletListProps) {
   return (
     <>
       <div className="space-y-3">
-        {/* Add Wallet Button */}
         <button
           onClick={() => setShowDialog(true)}
           className="w-full bg-gradient-to-br from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white font-semibold py-4 px-6 rounded-2xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
@@ -41,7 +39,6 @@ export function WalletList({ wallets, onRefresh }: WalletListProps) {
           <span>Add New Wallet</span>
         </button>
 
-        {/* Wallet List Container */}
         {wallets.length > 0 ? (
           <div className="bg-gradient-to-br from-gray-300 to-gray-400 rounded-2xl p-4 shadow-lg">
             <h3 className="text-sm font-bold text-gray-800 mb-3 text-center">
@@ -75,7 +72,6 @@ export function WalletList({ wallets, onRefresh }: WalletListProps) {
               ))}
             </div>
 
-            {/* Toggle Button */}
             {hasMoreWallets && (
               <button
                 onClick={() => setShowAll(!showAll)}
@@ -99,13 +95,12 @@ export function WalletList({ wallets, onRefresh }: WalletListProps) {
           <div className="bg-gradient-to-br from-gray-300 to-gray-400 rounded-2xl p-8 shadow-lg text-center">
             <p className="text-gray-700 font-medium mb-3">No wallets yet</p>
             <p className="text-sm text-gray-600">
-              Click "Add New Wallet" to get started!
+              Click &quot;Add New Wallet&quot; to get started!
             </p>
           </div>
         )}
       </div>
 
-      {/* Add Wallet Dialog */}
       <AddWalletDialog
         isOpen={showDialog}
         onClose={() => setShowDialog(false)}

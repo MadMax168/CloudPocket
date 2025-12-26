@@ -24,7 +24,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: cloudpocket168
       DB_NAME: cloudpocket
-      JWT_SECRET: your-super-secret-jwt-key
+      JWT_SECRET: cloudpocketsecret168
     # Add CORS for frontend development
     command: >
       sh -c "go run server.go"
